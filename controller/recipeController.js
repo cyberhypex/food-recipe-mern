@@ -5,7 +5,9 @@ const getRecipes=async(req,res)=>{
      return res.json(recipes)
 }
 const getRecipeById=async(req,res)=>{
-     
+     const recipe=await Recipes.findById(req.params.id);
+     return res.json(recipe)
+
 }
 const addRecipe=async(req,res)=>{
      const {title,ingredients,instructions,time}=req.body
@@ -18,11 +20,33 @@ const addRecipe=async(req,res)=>{
      })
      return res.json(newRecipe)
 }
-const editRecipe=(req,res)=>{
-     res.json({message:"Hello edit"})
+const editRecipe=async(req,res)=>{
+     const {title,ingredients,instructions,time}=req.body
+     
+     let recipe=await Recipes.findById(req.params.id)
+     try{if(recipe){
+        await Recipes.findByIdAndUpdate(req.params.id,req.body,{new:true});
+        return res.json({title,ingredients,instructions,time})
+     }
+    }
+    catch(error){
+        return res.status(404).json({message:`Food with ${req.params.id} not found `})
+    }
+     
 }
-const deleteRecipe=(req,res)=>{
-     res.json({message:"Hello delete"})
+const deleteRecipe=async(req,res)=>{
+    const recipe=await Recipes.findById(req.params.id);
+    try{
+        if(recipe){
+        await Recipes.findByIdAndDelete(req.params.id);
+        return res.status(200).json({message:"Deleted successfully"})
+    }
+    return res.status(404).json({message:`No recipe with ${req.params.id} found`})
+    }
+    catch(error){
+        return res.status(500).json({message:"Server error",error})
+    }
+    
 }
 
 
