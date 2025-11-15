@@ -6,6 +6,7 @@ const connectDB=require('./config/connectionDB')
 const cors=require('cors')
 app.use(cors())
 app.use(express.json())
+app.use(express.static("public"))
 
 
 app.use("/recipe",require("./routes/recipe"))
